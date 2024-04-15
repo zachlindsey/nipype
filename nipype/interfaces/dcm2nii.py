@@ -470,7 +470,7 @@ class Dcm2niix(CommandLine):
 
         for filename in filenames:
             # search for relevant files, and sort accordingly
-            for fl in search_files(filename, outtypes):
+            for fl in search_files(filename, outtypes, self.inputs.crop):
                 if (
                     fl.endswith(".nii")
                     or fl.endswith(".gz")
@@ -486,6 +486,11 @@ class Dcm2niix(CommandLine):
                     mvecs.append(fl)
                 elif fl.endswith(".json") or fl.endswith(".txt"):
                     bids.append(fl)
+
+        # in siemens mosaic conversion nipype misread dcm2niix output and generate a duplicate list of results
+        # next line remove duplicates from output files array
+        outfiles = list(dict.fromkeys(outfiles))
+
         self.output_files = outfiles
         self.bvecs = bvecs
         self.mvecs = mvecs
@@ -503,7 +508,15 @@ class Dcm2niix(CommandLine):
 
 
 # https://stackoverflow.com/a/4829130
-def search_files(prefix, outtypes):
-    return it.chain.from_iterable(
+def search_files(prefix, outtypes, search_crop):
+    found = it.chain.from_iterable(
         iglob(glob.escape(prefix + outtype)) for outtype in outtypes
     )
+    if search_crop:
+        found = it.chain(
+            it.chain.from_iterable(
+                iglob(glob.escape(prefix) + "_Crop_*" + outtype) for outtype in outtypes
+            ),
+            found,
+        )
+    return found
