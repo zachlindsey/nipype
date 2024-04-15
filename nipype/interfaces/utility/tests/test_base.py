@@ -78,3 +78,16 @@ def test_merge(tmpdir, args, kwargs, in_lists, expected):
         assert not isdefined(res.outputs.out)
     else:
         assert res.outputs.out == expected
+
+
+def test_string_interpolate():
+
+    interpolate = utility.StringInterpolate()
+
+    interpolate.inputs.input_string = "{greeting}, {name}!"
+    interpolate.inputs.greeting = "Hello"
+    interpolate.inputs.name = "Nipype"
+
+    res = interpolate.run()
+
+    assert res.outputs.output_string == "Hello, Nipype!"

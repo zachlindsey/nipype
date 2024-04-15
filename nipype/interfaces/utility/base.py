@@ -430,3 +430,26 @@ class AssertEqual(BaseInterface):
         if not np.array_equal(data1, data2):
             raise RuntimeError("Input images are not exactly equal")
         return runtime
+
+
+class StringInterpolateInputSpec(DynamicTraitedSpec):
+    input_string = Str(mandatory = True)
+
+class StringInterpolateOutputSpec(TraitedSpec):
+    output_string = Str()
+
+class StringInterpolate(BaseInterface):
+    input_spec = StringInterpolateInputSpec
+    output_spec = StringInterpolateOutputSpec
+
+    def _run_interface(self, runtime):
+
+        subs = {
+            k: getattr(self.inputs, k) for k,_ in self.inputs.items() if k != "input_string"
+        }
+        self._output_string = self.inputs.input_string.format(**subs)
+
+    def _list_outputs(self):
+        return {
+            "output_string": self._output_string
+        }
