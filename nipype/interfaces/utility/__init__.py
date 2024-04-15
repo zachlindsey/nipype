@@ -6,6 +6,6 @@ Package contains interfaces for using existing functionality in other packages
 Requires Packages to be installed
 """
 
-from .base import IdentityInterface, Rename, Select, Split, Merge, AssertEqual
+from .base import IdentityInterface, Rename, Select, Split, Merge, AssertEqual, StringInterpolate
 from .csv import CSVReader
 from .wrappers import Function

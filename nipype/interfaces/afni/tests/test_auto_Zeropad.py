@@ -70,6 +70,7 @@ def test_Zeropad_inputs():
         out_file=dict(
             argstr="-prefix %s",
             extensions=None,
+            name_template="zeropad",
         ),
         outputtype=dict(),
         z=dict(
